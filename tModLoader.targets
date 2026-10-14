@@ -1,0 +1,10 @@
+<Project>
+  <Import Project="C:/Program Files (x86)/Steam/steamapps/common/tModLoader/tMLMod.targets" />
+  <PropertyGroup>
+    <DevelopmentSavePath>$(MSBuildThisFileDirectory).dev\tModLoader</DevelopmentSavePath>
+  </PropertyGroup>
+  <!-- Quote paths because the workspace directory contains spaces. -->
+  <Target Name="BuildMod" AfterTargets="Build" Condition="'$(BuildMod)' == 'true'">
+    <Exec Command="&quot;$(tMLSteamPath)dotnet/dotnet.exe&quot; &quot;$(tMLPath)&quot; -server -build &quot;$(MSBuildProjectDirectory)&quot; -eac &quot;$(TargetPath)&quot; -define &quot;$(DefineConstants)&quot; -unsafe $(AllowUnsafeBlocks) -tmlsavedirectory &quot;$(DevelopmentSavePath)&quot;" WorkingDirectory="$(tMLSteamPath)" />
+  </Target>
+</Project>

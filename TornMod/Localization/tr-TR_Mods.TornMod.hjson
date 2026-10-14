@@ -1,0 +1,96 @@
+{
+  "DamageClasses": {
+    "BoltActionDamageClass": {
+      "DisplayName": "bolt action damage"
+    },
+    "SaberDamageClass": {
+      "DisplayName": "saber damage"
+    }
+  },
+  "Projectiles": {
+    "PiercerBulletProjectile": {
+      "DisplayName": "Piercer"
+    },
+    "SaberChargeProjectile": {
+      "DisplayName": "Saber"
+    },
+    "HotCasingProjectile": {
+      "DisplayName": "Hot Casing"
+    },
+    "SlipperonProjectile": {
+      "DisplayName": "Slipperon"
+    },
+    "SlipperonChildProjectile": {
+      "DisplayName": "Mom's Slipper"
+    },
+    "MomsSlipperProjectile": {
+      "DisplayName": "Mom's Slipper"
+    },
+    "PiercerReloadProjectile": {
+      "DisplayName": "Piercer"
+    },
+    "SaberSlashProjectile": {
+      "DisplayName": "Saber"
+    },
+    "SaberDashTrailProjectile": {
+      "DisplayName": "Saber"
+    },
+    "SlipperonSplitProjectile": {
+      "DisplayName": "Slipperon"
+    }
+  },
+  "RecipeGroups": {
+    "GoldOrPlatinumBar": "Gold or Platinum Bar"
+  },
+  "Configs": {
+    "WeaponConfig": {
+      "DisplayName": "Gameplay Settings",
+      "InstantRespawn": {
+        "Label": "Instant Respawn",
+        "Tooltip": "Remove the respawn countdown. Hardcore deaths still remain permanent."
+      },
+      "Invincibility": {
+        "Tooltip": "Prevent player damage while enabled.",
+        "Label": "Invincibility"
+      },
+      "WarpToCursor": {
+        "Label": "Warp to Cursor",
+        "Tooltip": "Enable the Warp to Cursor key (R by default). Replaces Quick Mount on a warp press while enabled."
+      }
+    }
+  },
+  "Items": {
+    "Piercer": {
+      "DisplayName": "Piercer",
+      "Tooltip": "Bolt Action Rifle subclass: inherits ranged bonuses\nFires very fast, long bullets that pierce up to 3 enemies\nRight click after firing to cycle the bolt before shooting again\nBolt cycle: 2 seconds with a long open phase\nWhile cycling: +50% movement speed and +20% jump power\nEjects a hot casing that remains on the ground for 5 seconds\nCasings inflict On Fire on NPCs and never burn players"
+    },
+    "Slipperon": {
+      "DisplayName": "Slipperon",
+      "Tooltip": "A reusable homing slipper boomerang\nLeft click: hits enemies both outbound and on return\nRight click: splits into three homing slippers at half range\nRight click takes twice as long; each child hits one enemy\nCannot be thrown again until the boomerang or all children disappear"
+    },
+    "Saber": {
+      "DisplayName": "Saber",
+      "Tooltip": "Saber subclass: inherits melee damage and attack speed\nHold left click to repeatedly slash toward the cursor\nHold right click to charge and repeatedly dash after cooldown\nGrounded use with 8 ticks of coyote time; release early for a shorter dash\nFull charge takes 1 second; charge increases distance and damage\nDash keeps its momentum and hits each crossed enemy once with a guaranteed critical\nA successful dash hit blocks your next fall damage"
+    },
+    "MomsSlipper": {
+      "DisplayName": "Mom's Slipper",
+      "Tooltip": "A spinning, consumable ranged slipper\nFlies straight briefly, then locks onto a nearby enemy\nNever changes targets after locking on\nDisappears when it hits an enemy or terrain\nConsumes one slipper per throw"
+    },
+    "RepeatingCrossbow": {
+      "Tooltip": "Hold left click to fire a rapid three-arrow magazine\n10 ticks between shots; automatically reloads for 1 second\nCannot fire while reloading or without arrows\nUses one arrow per shot under normal ammo consumption rules\nUses your selected arrow type; magazine animation follows its state",
+      "DisplayName": "Repeating Crossbow"
+    },
+    "GliderWings": {
+      "Tooltip": "Hold Jump to chain jumps, rocket boots and wings, then glide\nNormal Glide: Left/Right steer; Down dives and builds momentum\nPress Toggle Glider Mode (W by default) during airborne Jump use\nAcrobatics: mouse steers flight and rolls; climbing spends momentum\nRocket boots add thrust toward the mouse using their normal fuel\nRelease Jump to leave flight; mouse still aims your weapons\nMovement accessory — Pre-Hardmode",
+      "DisplayName": "Glider Wings"
+    }
+  },
+  "Keybinds": {
+    "ToggleGliderMode": {
+      "DisplayName": "Toggle Glider Mode"
+    },
+    "WarpToCursor": {
+      "DisplayName": "Warp to Cursor"
+    }
+  }
+}

@@ -1,0 +1,15 @@
+.vs/
+**/bin/
+**/obj/
+.dev/
+*.user
+*.tmod
+/dist/
+*.log
+*.suo
+*.tmp
+.env
+.env.*
+!.env.example
+Thumbs.db
+.DS_Store

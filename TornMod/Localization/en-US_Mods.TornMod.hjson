@@ -1,0 +1,125 @@
+DamageClasses: {
+	BoltActionDamageClass.DisplayName: bolt action damage
+	SaberDamageClass.DisplayName: saber damage
+}
+
+Projectiles: {
+	PiercerBulletProjectile.DisplayName: Piercer
+	SaberChargeProjectile.DisplayName: Saber
+	HotCasingProjectile.DisplayName: Hot Casing
+	SlipperonProjectile.DisplayName: Slipperon
+	SlipperonChildProjectile.DisplayName: Mom's Slipper
+	MomsSlipperProjectile.DisplayName: Mom's Slipper
+	PiercerReloadProjectile.DisplayName: Piercer
+	SaberSlashProjectile.DisplayName: Saber
+	SaberDashTrailProjectile.DisplayName: Saber
+	SlipperonSplitProjectile.DisplayName: Slipperon
+}
+
+RecipeGroups.GoldOrPlatinumBar: Gold or Platinum Bar
+
+Configs: {
+	WeaponConfig: {
+		DisplayName: Gameplay Settings
+
+		InstantRespawn: {
+			Label: Instant Respawn
+			Tooltip: Remove the respawn countdown. Hardcore deaths still remain permanent.
+		}
+
+		Invincibility: {
+			Tooltip: Prevent player damage while enabled.
+			Label: Invincibility
+		}
+
+		WarpToCursor: {
+			Label: Warp to Cursor
+			Tooltip: Enable the Warp to Cursor key (R by default). Replaces Quick Mount on a warp press while enabled.
+		}
+	}
+}
+
+Items: {
+	GliderWings: {
+		DisplayName: Glider Wings
+		Tooltip:
+			'''
+			Hold Jump to chain jumps, rocket boots and wings, then glide
+			Normal Glide: Left/Right steer; Down dives and builds momentum
+			Press Toggle Glider Mode (W by default) during airborne Jump use
+			Acrobatics: mouse steers flight and rolls; climbing spends momentum
+			Rocket boots add thrust toward the mouse using their normal fuel
+			Release Jump to leave flight; mouse still aims your weapons
+			Movement accessory — Pre-Hardmode
+			'''
+	}
+
+	RepeatingCrossbow: {
+		DisplayName: Repeating Crossbow
+		Tooltip:
+			'''
+			Hold left click to fire a rapid three-arrow magazine
+			10 ticks between shots; automatically reloads for 1 second
+			Cannot fire while reloading or without arrows
+			Uses one arrow per shot under normal ammo consumption rules
+			Uses your selected arrow type; magazine animation follows its state
+			'''
+	}
+
+	Piercer: {
+		DisplayName: Piercer
+		Tooltip:
+			'''
+			Bolt Action Rifle subclass: inherits ranged bonuses
+			Fires very fast, long bullets that pierce up to 3 enemies
+			Right click after firing to cycle the bolt before shooting again
+			Bolt cycle: 2 seconds with a long open phase
+			While cycling: +50% movement speed and +20% jump power
+			Ejects a hot casing that remains on the ground for 5 seconds
+			Casings inflict On Fire on NPCs and never burn players
+			'''
+	}
+
+	Slipperon: {
+		DisplayName: Slipperon
+		Tooltip:
+			'''
+			A reusable homing slipper boomerang
+			Left click: hits enemies both outbound and on return
+			Right click: splits into three homing slippers at half range
+			Right click takes twice as long; each child hits one enemy
+			Cannot be thrown again until the boomerang or all children disappear
+			'''
+	}
+
+	Saber: {
+		DisplayName: Saber
+		Tooltip:
+			'''
+			Saber subclass: inherits melee damage and attack speed
+			Hold left click to repeatedly slash toward the cursor
+			Hold right click to charge and repeatedly dash after cooldown
+			Grounded use with 8 ticks of coyote time; release early for a shorter dash
+			Full charge takes 1 second; charge increases distance and damage
+			Dash keeps its momentum and hits each crossed enemy once with a guaranteed critical
+			A successful dash hit blocks your next fall damage
+			'''
+	}
+
+	MomsSlipper: {
+		DisplayName: Mom's Slipper
+		Tooltip:
+			'''
+			A spinning, consumable ranged slipper
+			Flies straight briefly, then locks onto a nearby enemy
+			Never changes targets after locking on
+			Disappears when it hits an enemy or terrain
+			Consumes one slipper per throw
+			'''
+	}
+}
+
+Keybinds: {
+	ToggleGliderMode.DisplayName: Toggle Glider Mode
+	WarpToCursor.DisplayName: Warp to Cursor
+}

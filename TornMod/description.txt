@@ -1,0 +1,4 @@
+Five experimental weapons: Mom's Slipper, Slipperon, Saber, Piercer and Repeating Crossbow.
+Glider Wings is a momentum-based movement accessory: hold Jump to glide and Down to dive.
+Saber and Bolt Action Rifle are separate damage subclasses.
+Gameplay Settings includes optional Instant Respawn and Invincibility. Weapon balance is fixed.

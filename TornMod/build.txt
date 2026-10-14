@@ -1,0 +1,4 @@
+displayName = Torn Mod
+author = merme
+version = 0.4
+buildIgnore = *.csproj, *.user, obj/*, bin/*, Properties/*

@@ -1,0 +1,22 @@
+{
+  "profiles": {
+    "Terraria": {
+      "commandName": "Executable",
+      "executablePath": "$(tMLSteamPath)dotnet/dotnet.exe",
+      "commandLineArgs": "tModLoader.dll -tmlsavedirectory \"$(DevelopmentSavePath)\"",
+      "workingDirectory": "$(tMLSteamPath)",
+      "environmentVariables": {
+        "DOTNET_MODIFIABLE_ASSEMBLIES": "debug"
+      }
+    },
+    "Terraria - Quick Test": {
+      "commandName": "Executable",
+      "executablePath": "$(tMLSteamPath)dotnet/dotnet.exe",
+      "commandLineArgs": "tModLoader.dll -tmlsavedirectory \"$(DevelopmentSavePath)\" -skipselect",
+      "workingDirectory": "$(tMLSteamPath)",
+      "environmentVariables": {
+        "DOTNET_MODIFIABLE_ASSEMBLIES": "debug"
+      }
+    }
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "SaberDamage": 12,
+  "SaberDashTicks": 12,
+  "SaberLength": 65.0,
+  "SaberChargedCritMultiplier": 4.0,
+  "SaberHitStopTicks": 10
+}

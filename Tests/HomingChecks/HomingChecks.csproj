@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="../../TornMod/Common/HomingMath.cs" Link="HomingMath.cs" />
+    <Compile Include="../../TornMod/Common/Saber/SaberMechanics.cs" Link="SaberMechanics.cs" />
+    <Compile Include="../../TornMod/Common/Glider/GliderController.cs" Link="GliderController.cs" />
+  </ItemGroup>
+</Project>

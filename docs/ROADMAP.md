@@ -12,7 +12,7 @@ Visual direction: recognizable Terraria-style silhouettes, tangible wood/leather
 2. Inspect full-roll character/armor/weapon alignment and improve temporary wing art.
 3. Balance acquisition, costs and damage using real encounters; retain fixed code tuning rather than reopening every value as a debug config slider.
 4. Validate vanilla accessory interactions and real multiplayer before widening content.
-5. Add Saber/Bolt Action accessories and weapons that create different charge, mobility, reload or penetration playstyles. No exact accessory list is approved yet.
+5. Add Saber/Bolt Action/Lancer accessories and weapons that create different charge, mobility, reload, penetration or momentum/spacing playstyles. No exact accessory list is approved yet.
 
 Ask of each new item: what does it make the player do differently? Avoid adding only a larger damage number.
 
@@ -25,6 +25,7 @@ Ask of each new item: what does it make the player do differently? Avoid adding 
 | Slipperon | After Eye of Cthulhu; evil-metal upgrade with a manageable slipper cost. |
 | Piercer | After Eater of Worlds/Brain of Cthulhu, before Skeletron; Musket or Undertaker upgrade with equivalent world-evil access. |
 | Repeating Crossbow | Pre-Skeletron ranged alternative. |
+| Iron Lance | Pre-Eye of Cthulhu; its Iron/Lead + Wood Anvil recipe is implemented. |
 | Glider Wings | Pre-Hardmode; recipe/acquisition undecided. |
 
 Actual recipes remain in [Weapons](WEAPONS.md). In particular Slipperon still costs 1000 slippers, and Piercer currently requires Musket rather than an Undertaker alternative. Progression proposals have not changed drops or recipes.

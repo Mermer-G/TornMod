@@ -5,7 +5,7 @@ using Terraria.ModLoader;
 
 namespace TornMod.Common.SaberCombat;
 
-// The shared right-click controller applies to every item in the Saber damage subclass.
+// Saber-specific controls must not affect other vanilla melee weapons.
 public class SaberWeaponRules : GlobalItem
 {
     public override bool? CanHitNPC(Item item, Player player, NPC target)

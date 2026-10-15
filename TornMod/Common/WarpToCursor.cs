@@ -66,6 +66,7 @@ public class WarpToCursorPlayer : ModPlayer
     internal static void StopCombat(Player player)
     {
         player.GetModPlayer<SaberCombatPlayer>().ResetForTeleport();
+        player.GetModPlayer<Lancer.LancerPlayer>().CancelLance();
         var glider = player.GetModPlayer<Glider.GliderPlayer>();
         glider.ApplyNetworkState(false, false, System.Numerics.Vector2.Zero, glider.Acrobatics, glider.AimAngle);
         foreach (Projectile projectile in Main.ActiveProjectiles)

@@ -20,6 +20,7 @@ public static class GliderTuning
     public const float AcrobaticsGravity = 0.18f;
     public const float BoostAcceleration = 0.22f;
     public const float PoseSmoothing = 0.12f;
+    public const float MaxExternalSpeed = 256f;
 }
 
 // Canonical velocity uses positive Y downward, regardless of the player's gravity direction.
@@ -27,13 +28,26 @@ public static class GliderTuning
 public sealed class GliderController
 {
     public Vector2 Velocity { get; private set; }
+    private float externalLimit = GliderTuning.MaxSpeed;
+    public bool ExternalMomentumActive => externalLimit > GliderTuning.MaxSpeed;
     public void Capture(Vector2 velocity) => Velocity = velocity;
+    public void CaptureExternal(Vector2 velocity)
+    {
+        Capture(velocity);
+        externalLimit = Math.Clamp(velocity.Length(), GliderTuning.MaxSpeed, GliderTuning.MaxExternalSpeed);
+    }
+    public void ClearExternalMomentum() => externalLimit = GliderTuning.MaxSpeed;
+    private float MovementLimit()
+    {
+        externalLimit = Math.Max(GliderTuning.MaxSpeed, Math.Min(externalLimit, Velocity.Length()) * GliderTuning.Drag);
+        return externalLimit;
+    }
     public Vector2 Step(int facing, int steering, bool dive)
     {
         Vector2 velocity = Velocity;
         velocity.Y = Math.Max(0f, velocity.Y) + (dive ? GliderTuning.DiveGravity : GliderTuning.Gravity);
         velocity *= dive ? GliderTuning.DiveDrag : GliderTuning.Drag;
-        float speed = Math.Min(GliderTuning.MaxSpeed, velocity.Length());
+        float speed = Math.Min(MovementLimit(), velocity.Length());
         float lift = Math.Clamp(MathF.Abs(velocity.X) / GliderTuning.LiftSpeed, 0f, 1f);
         float sink = GliderTuning.StallSink + (GliderTuning.MinSink - GliderTuning.StallSink) * lift;
         int heading = steering != 0 ? steering : MathF.Abs(velocity.X) > 0.05f ? Math.Sign(velocity.X) : facing;
@@ -55,7 +69,8 @@ public sealed class GliderController
         Vector2 target = new(MathF.Cos(targetAngle), MathF.Sin(targetAngle));
         Vector2 velocity = Velocity * GliderTuning.AcrobaticsDrag;
         if (powered) velocity += target * GliderTuning.BoostAcceleration;
-        float speed = Math.Min(GliderTuning.MaxSpeed, velocity.Length());
+        float limit = MovementLimit();
+        float speed = Math.Min(limit, velocity.Length());
         float angle = MathF.Atan2(velocity.Y, velocity.X);
         float authority = Math.Clamp(speed / GliderTuning.LiftSpeed, 0.15f, 1f);
         angle += Math.Clamp(WrapAngle(targetAngle - angle), -GliderTuning.AcrobaticsTurnRate * authority,
@@ -67,19 +82,21 @@ public sealed class GliderController
         // Climbing spends kinetic energy; steering loops cannot create free altitude.
         float gravityAlong = GliderTuning.AcrobaticsGravity * direction.Y;
         float finalSpeed = gravityAlong + MathF.Sqrt(speed * speed + gravityAlong * gravityAlong);
-        Velocity = direction * Math.Min(GliderTuning.MaxSpeed, finalSpeed);
+        Velocity = direction * Math.Min(limit, finalSpeed);
         return Velocity;
     }
     public Vector2 Coast()
     {
         // When switching back during a climb, retain momentum until falling resumes.
         Velocity = (Velocity + new Vector2(0, GliderTuning.Gravity)) * GliderTuning.Drag;
-        if (Velocity.LengthSquared() > GliderTuning.MaxSpeed * GliderTuning.MaxSpeed)
-            Velocity = Vector2.Normalize(Velocity) * GliderTuning.MaxSpeed;
+        float limit = MovementLimit();
+        if (Velocity.LengthSquared() > limit * limit)
+            Velocity = Vector2.Normalize(Velocity) * limit;
         return Velocity;
     }
     public static float WrapAngle(float angle) => MathF.IEEERemainder(angle, MathF.Tau);
     public static float SmoothAngle(float current, float target) => current + WrapAngle(target - current) * GliderTuning.PoseSmoothing;
-    public static bool ValidSnapshot(Vector2 velocity, bool allowUpward = false) => float.IsFinite(velocity.X) && float.IsFinite(velocity.Y) &&
-        (allowUpward || velocity.Y >= 0f) && velocity.LengthSquared() <= (GliderTuning.MaxSpeed + 0.01f) * (GliderTuning.MaxSpeed + 0.01f);
+    public static bool ValidSnapshot(Vector2 velocity, bool allowUpward = false, bool externalMomentum = false) => float.IsFinite(velocity.X) && float.IsFinite(velocity.Y) &&
+        (allowUpward || velocity.Y >= 0f) && velocity.LengthSquared() <=
+        MathF.Pow((externalMomentum ? GliderTuning.MaxExternalSpeed : GliderTuning.MaxSpeed) + 0.01f, 2);
 }

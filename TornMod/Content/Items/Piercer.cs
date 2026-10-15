@@ -20,7 +20,7 @@ public class Piercer : ModItem
     {
         var musket = new Item(); musket.SetDefaults(ItemID.Musket);
         Item.damage = System.Math.Max(1, (int)System.MathF.Round(musket.damage * 1.5f));
-        Item.DamageType = ModContent.GetInstance<BoltActionDamageClass>();
+        Item.DamageType = DamageClass.Ranged;
         Item.width = 82; Item.height = 20;
         Item.useTime = Item.useAnimation = 24;
         Item.useStyle = ItemUseStyleID.Shoot;

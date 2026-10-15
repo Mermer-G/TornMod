@@ -84,7 +84,7 @@ public class GliderPlayer : ModPlayer
         bool capacity = GliderFlightBridge.HasCapacity(Player);
         bool active = Owner ? Equipped && Player.controlJump && !blocked && !supported &&
             (Boosting || (!capacity && (Gliding || Player.velocity.Y * Player.gravDir >= 0f))) : remoteGliding && !blocked && !supported;
-        if (!active) { Gliding = Boosting = false; return; }
+        if (!active) { Gliding = Boosting = false; controller.ClearExternalMomentum(); return; }
         if (Owner && Acrobatics)
         {
             Vector2 aim = Main.MouseWorld - Player.MountedCenter;
@@ -103,7 +103,7 @@ public class GliderPlayer : ModPlayer
         else if (controller.Velocity.Y < 0f) velocity = controller.Coast();
         else velocity = controller.Step(Player.direction, steering, Owner ? Player.controlDown : remoteDive);
         Player.velocity = new Vector2(velocity.X, velocity.Y * Player.gravDir);
-        Player.maxFallSpeed = GliderTuning.MaxSpeed;
+        Player.maxFallSpeed = controller.ExternalMomentumActive ? Math.Max(GliderTuning.MaxSpeed, velocity.Length()) : GliderTuning.MaxSpeed;
     }
     public override void PostUpdate()
     {
@@ -111,7 +111,7 @@ public class GliderPlayer : ModPlayer
         if (Gliding)
         {
             var actual = new NumericsVector(Player.velocity.X, Player.velocity.Y * Player.gravDir);
-            if (!GliderController.ValidSnapshot(actual, true)) Gliding = Boosting = false;
+            if (!GliderController.ValidSnapshot(actual, true, controller.ExternalMomentumActive)) Gliding = Boosting = false;
             else controller.Capture(actual);
         }
         bool diving = Gliding && (Acrobatics ? MathF.Sin(AimAngle) > 0.35f : Owner ? Player.controlDown : remoteDive);
@@ -133,6 +133,12 @@ public class GliderPlayer : ModPlayer
             NetMessage.SendData(MessageID.PlayerControls, number: Player.whoAmI);
             SendState();
         }
+    }
+    // Called only when another mechanic has actually changed the player's momentum.
+    internal void AcceptExternalMomentum()
+    {
+        if (Gliding) controller.CaptureExternal(new NumericsVector(Player.velocity.X, Player.velocity.Y * Player.gravDir));
+        if (Gliding && Owner && Main.netMode == NetmodeID.MultiplayerClient) SendState();
     }
     internal void UpdateFacingFromInput()
     {
@@ -173,11 +179,12 @@ public class GliderPlayer : ModPlayer
         drawInfo.compositeFrontArmRotation -= Lean;
         drawInfo.compositeBackArmRotation -= Lean;
     }
-    public void ApplyNetworkState(bool active, bool dive, NumericsVector velocity, bool acrobatics = false, float aim = 0f, bool powered = false)
+    public void ApplyNetworkState(bool active, bool dive, NumericsVector velocity, bool acrobatics = false, float aim = 0f, bool powered = false, bool externalMomentum = false)
     {
         remoteGliding = active; remoteDive = dive; remotePowered = powered;
         Gliding = active; Acrobatics = acrobatics; AimAngle = aim; Boosting = powered;
-        if (active) controller.Capture(velocity);
+        if (active && externalMomentum) controller.CaptureExternal(velocity);
+        else { controller.ClearExternalMomentum(); if (active) controller.Capture(velocity); }
     }
     public void SendState(int toWho = -1, int ignoreWho = -1)
     {
@@ -189,6 +196,7 @@ public class GliderPlayer : ModPlayer
         var velocity = Gliding ? controller.Velocity : NumericsVector.Zero;
         packet.Write(velocity.X); packet.Write(velocity.Y);
         packet.Write(Acrobatics); packet.Write(GliderController.WrapAngle(AimAngle)); packet.Write(Boosting);
+        packet.Write(controller.ExternalMomentumActive);
         packet.Send(toWho, ignoreWho);
     }
     public override void SyncPlayer(int toWho, int fromWho, bool newPlayer) => SendState(toWho, fromWho);
@@ -196,6 +204,7 @@ public class GliderPlayer : ModPlayer
     {
         flight.RestoreWings(Player);
         Gliding = remoteGliding = remotePowered = Boosting = false;
+        controller.ClearExternalMomentum();
         WingOpen = DiveBlend = Lean = 0f;
         if (Main.netMode == NetmodeID.MultiplayerClient && Owner && lastSentGliding)
         {

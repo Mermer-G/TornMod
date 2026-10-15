@@ -18,7 +18,7 @@ public class SaberSlashProjectile : ModProjectile
     public override string Texture => "TornMod/Content/Items/Saber";
     private bool Charged => Projectile.ai[1] > 0f;
     public override bool? CanDamage() => Projectile.ai[1] == 2f ? false : null;
-    private float AttackSpeed => MathF.Max(0.1f, Main.player[Projectile.owner].GetTotalAttackSpeed(ModContent.GetInstance<SaberDamageClass>()));
+    private float AttackSpeed => MathF.Max(0.1f, Main.player[Projectile.owner].GetTotalAttackSpeed(DamageClass.Melee));
     private float AnimationTicks => MathF.Max(1f, WeaponBalance.SaberSlashTicks / AttackSpeed);
     private float Progress => MathHelper.Clamp(Projectile.localAI[0] / AnimationTicks, 0f, 1f);
     private float SwingAngle => Projectile.ai[0] + SaberMechanics.SwingOffset(Projectile.localAI[0] * AttackSpeed) *
@@ -30,7 +30,7 @@ public class SaberSlashProjectile : ModProjectile
     {
         Projectile.width = Projectile.height = 16;
         Projectile.friendly = true;
-        Projectile.DamageType = ModContent.GetInstance<SaberDamageClass>();
+        Projectile.DamageType = DamageClass.Melee;
         Projectile.penetrate = -1;
         Projectile.tileCollide = false;
         Projectile.ignoreWater = true;

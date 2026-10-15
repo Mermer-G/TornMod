@@ -34,7 +34,7 @@ public class SaberChargeProjectile : ModProjectile
         Projectile.timeLeft = 2;
         Projectile.penetrate = -1;
         Projectile.aiStyle = -1;
-        Projectile.DamageType = ModContent.GetInstance<SaberDamageClass>();
+        Projectile.DamageType = DamageClass.Melee;
     }
     public override bool? CanDamage() => false;
     public override bool ShouldUpdatePosition() => false;

@@ -1,4 +1,4 @@
-# Current weapons and subclasses
+# Current weapons and damage types
 
 Updated: 2026-10-14. Code is authoritative; all values below are prototype balance.
 
@@ -20,11 +20,11 @@ Charge selects a 56–336-pixel controlled dash, lasting up to 12 ticks with 0.8
 
 Dash completion and its visual-only slash retain collision-resolved velocity. Successful passage hits grant one-use fall protection and temporary protection against the contacted enemies; passage does not pause for hit stop. Holding right starts another charge when the cooldown (item useTime / attack speed), ending slash and support/coyote conditions permit.
 
-All Saber-class items use the shared right-click rules, subclass validation and held-item contact suppression. The ready sword is belt-anchored; supplied art, mirrored curvature, Terragrim animation and short trails are preserved.
+Only the Saber item uses its right-click rules and held-item contact suppression; ordinary melee weapons do not receive these mechanics. The ready sword is belt-anchored; supplied art, mirrored curvature, Terragrim animation and short trails are preserved.
 
 ## Piercer
 
-Bolt Action ranged subclass. Base damage is rounded Musket damage ×1.5. Selected bullet ammo contributes damage/consumption normally; its projectile effects are replaced by a fast, thin custom bullet piercing three distinct enemies. Six movement updates per tick and swept collision reduce missed targets.
+Vanilla ranged weapon. Base damage is rounded Musket damage ×1.5. Selected bullet ammo contributes damage/consumption normally; its projectile effects are replaced by a fast, thin custom bullet piercing three distinct enemies. Six movement updates per tick and swept collision reduce missed targets.
 
 After a shot, right click cycles the bolt without ammo: 120 ticks total, 18 opening / 84 open / 18 closing. Reload gives 50% movement/acceleration and 20% jump-launch boosts. Ejected casings fall, remain grounded for 300 ticks and refresh On Fire on overlapping NPCs, never players. Switching slots/death cancels the cycle without rearming. Bolt state persists per item.
 
@@ -36,6 +36,16 @@ Ranged: 12 damage, 2 knockback, 4% crit, speed 12. Three shots at fixed 10-tick 
 
 Reload advances while in inventory; its visible fill steps are at 15/30/45 ticks, but firing waits for tick 60. Each shot captures a fresh aim; the weapon appears during that shot and retains its direction throughout the animation. Per-item magazine/reload/aim are saved and network-serialized.
 
+## Iron Lance / Lancer
+
+Iron Lance is Pre-Eye: 240-pixel length with only its final 40 pixels damaging, 10 contact damage, 1.5 knockback, 15-tick preparation and independent 10-tick NPC immunity (nominal raw DPS 60). Hold left to smoothly track the mouse at up to 540 degrees/second before and after readiness. Movement, jumping and Glider remain available; release retracts and disables damage.
+
+First impact scales linearly from 5x source damage at 30 mph relative forward approach to 20x at 100 mph, capped above it; below 30 mph uses ordinary contact damage. Twenty ready ticks outside the tip path rearm that NPC. Above 45 mph of player forward speed, a successful first impact adds 50 mph and earns 60 ticks of NPC-specific contact protection, with a vanilla sound and gold particle ring. Continuous contact does not renew it. The player grips the 240-pixel shaft at its midpoint.
+
+Right temporarily suspends the stance for a locked 12-tick Quick Thrust: 30 damage, knockback 8 away from the player, 30-tick use interval, once per NPC, no momentum. Held left immediately resumes an already ready stance; incomplete preparation preserves progress. Shared contact immunity survives the transition to prevent cooldown bypass.
+
+Iron Lance uses vanilla Melee damage and does not receive Saber controls. Prototype contact/preparation/quick timers are fixed even though attack-speed stats are inherited. Future shared lances extend LancerWeapon and override LancerSettings, sprite crop and recipe. See [Lancer](LANCER.md) for implementation and test limits.
+
 ## Actual recipes
 
 | Item | Current recipe |
@@ -45,18 +55,13 @@ Reload advances while in inventory; its visible fill steps are at 15/30/45 ticks
 | Saber | Anvil: 10 Iron/Lead Bars + 8 Wood |
 | Piercer | Anvil: Musket + 10 Iron/Lead Bars + 10 Wood |
 | Repeating Crossbow | Anvil: 15 Wood + 8 Iron/Lead Bars + 2 Chain |
+| Iron Lance | Anvil: 10 Iron/Lead Bars + 5 Wood |
 | Glider Wings | No recipe yet |
 
 Progression proposals in [Roadmap](ROADMAP.md) have not replaced these recipes. No custom drops/chest loot are implemented for these items.
 
-## Subclass extension
+## Vanilla damage classes
 
-SaberDamageClass fully inherits Generic/Melee stats and Melee effects; BoltActionDamageClass inherits Generic/Ranged stats and Ranged effects. Class-only bonuses do not buff unrelated weapons.
+Saber and Iron Lance use DamageClass.Melee; Piercer and Repeating Crossbow use DamageClass.Ranged. Their damaging projectiles and Saber direct dash hits use the matching vanilla class. Vanilla damage/crit/knockback/attack-speed bonuses and standard damage tooltip labels apply directly. Existing fixed timers remain fixed.
 
-```csharp
-Item.DamageType = ModContent.GetInstance<SaberDamageClass>();
-player.GetDamage<SaberDamageClass>() += 0.10f;
-player.GetAttackSpeed<SaberDamageClass>() += 0.10f;
-```
-
-Use the matching class for new hitboxes/direct hits. The shared Saber right-click controller already handles other Saber-class item IDs. Weapon-specific left attacks, visuals and additional mechanics still need explicit design.
+No custom DamageClass, weapon-family metadata or family-specific stat system remains. Saber controls check its item identity; Lancer retains its reusable LancerWeapon mechanics template. This template is implementation reuse, not a separate damage classification. Piercer bolt and Crossbow magazine data formats are unchanged.

@@ -15,7 +15,7 @@ public class PiercerBulletProjectile : ModProjectile
     {
         Projectile.CloneDefaults(ProjectileID.Bullet);
         AIType = ProjectileID.Bullet;
-        Projectile.DamageType = ModContent.GetInstance<BoltActionDamageClass>();
+        Projectile.DamageType = DamageClass.Ranged;
         Projectile.penetrate = 3;
         Projectile.extraUpdates = 5;
         Projectile.usesLocalNPCImmunity = true;

@@ -31,13 +31,14 @@ public class TornMod : Mod
             bool acrobatics = reader.ReadBoolean();
             float aim = reader.ReadSingle();
             bool powered = reader.ReadBoolean();
+            bool externalMomentum = reader.ReadBoolean();
             if (gliderId >= Main.maxPlayers || (Main.netMode == NetmodeID.Server && gliderId != whoAmI) ||
-                !GliderController.ValidSnapshot(velocity, true) || !float.IsFinite(aim) || System.MathF.Abs(aim) > System.MathF.PI + 0.001f ||
-                (powered && (!active || !acrobatics))) return;
+                !GliderController.ValidSnapshot(velocity, true, externalMomentum) || !float.IsFinite(aim) || System.MathF.Abs(aim) > System.MathF.PI + 0.001f ||
+                (powered && (!active || !acrobatics)) || (externalMomentum && !active)) return;
             // The owning client predicts movement; standard Terraria controls carry position/collisions.
             if (Main.netMode == NetmodeID.MultiplayerClient && gliderId == Main.myPlayer) return;
             var glider = Main.player[gliderId].GetModPlayer<GliderPlayer>();
-            glider.ApplyNetworkState(active, dive, velocity, acrobatics, aim, powered);
+            glider.ApplyNetworkState(active, dive, velocity, acrobatics, aim, powered, externalMomentum);
             if (Main.netMode == NetmodeID.Server) glider.SendState(-1, whoAmI);
             return;
         }

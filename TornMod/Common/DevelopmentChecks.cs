@@ -323,7 +323,7 @@ public class DevelopmentChecks : ModSystem
             var rifleItem = new Item(); rifleItem.SetDefaults(ModContent.ItemType<Piercer>());
             var musket = new Item(); musket.SetDefaults(ItemID.Musket);
             var rifle = (Piercer)rifleItem.ModItem;
-            var rifleClass = ModContent.GetInstance<global::TornMod.Common.BoltAction.BoltActionDamageClass>();
+            var rifleClass = DamageClass.Ranged;
             Check(rifleItem.damage == (int)MathF.Round(musket.damage * 1.5f) && rifleItem.DamageType == rifleClass &&
                 rifleItem.CountsAsClass(DamageClass.Ranged), "Piercer base damage is halved and inherits ranged effects");
             Main.player[0].inventory[0] = rifleItem; Main.player[0].selectedItem = 0;
@@ -341,7 +341,7 @@ public class DevelopmentChecks : ModSystem
             Check(rifle.CanUseItem(Main.player[0]), "Bolt completion unlocks firing again");
             Main.player[0].GetDamage(DamageClass.Ranged) += 0.25f;
             Check(MathF.Abs(Main.player[0].GetTotalDamage(rifleClass).ApplyTo(100) - 125) < 0.001f,
-                "Bolt Action subclass inherits ranged damage bonuses");
+                "Piercer uses vanilla ranged damage bonuses");
             Main.player[0].GetDamage(DamageClass.Ranged) = StatModifier.Default;
             Projectile piercingBullet = Shot(ModContent.ProjectileType<PiercerBulletProjectile>(), Vector2.UnitX * 18);
             Check(piercingBullet.penetrate == 3 && piercingBullet.localNPCHitCooldown == -1 &&
@@ -367,7 +367,7 @@ public class DevelopmentChecks : ModSystem
             hotCasing.ModProjectile.AI();
             Check(!Main.player[0].HasBuff(BuffID.OnFire), "Grounded casing never burns the player");
             Check(piercingBullet.extraUpdates == 5, "Piercer bullet uses six short movement steps per tick for high speed");
-            piercingBullet.Center = new Vector2(24, 0); piercingBullet.velocity = new Vector2(24, 0);
+            piercingBullet.Center = new Vector2(22 + global::TornMod.Common.Lancer.LancerTuning.ImpactForwardBoost, 0); piercingBullet.velocity = new Vector2(22 + global::TornMod.Common.Lancer.LancerTuning.ImpactForwardBoost, 0);
             Check(piercingBullet.ModProjectile.Colliding(piercingBullet.Hitbox, new Rectangle(8, -4, 4, 8)) == true,
                 "Fast bullet swept collision catches enemies between movement samples");
             rifle.RecordShot(Main.player[0]);
@@ -460,8 +460,8 @@ public class DevelopmentChecks : ModSystem
 
             var saber = new Item();
             saber.SetDefaults(ModContent.ItemType<global::TornMod.Content.Items.Saber>());
-            var saberClass = ModContent.GetInstance<SaberDamageClass>();
-            Check(saber.damage == 24 && saber.DamageType == saberClass && saber.autoReuse, "Saber subclass and held-click repeat defaults");
+            var saberClass = DamageClass.Melee;
+            Check(saber.damage == 24 && saber.DamageType == saberClass && saber.autoReuse, "Saber vanilla melee and held-click repeat defaults");
             Check(saber.CountsAsClass(DamageClass.Melee), "Saber inherits melee effects and prefixes");
             Player statsPlayer = Main.player[0];
             statsPlayer.GetDamage(DamageClass.Melee) += 0.5f;
@@ -469,10 +469,8 @@ public class DevelopmentChecks : ModSystem
             Check(MathF.Abs(statsPlayer.GetTotalDamage(saberClass).ApplyTo(24f) - 36f) < 0.001f &&
                 MathF.Abs(statsPlayer.GetTotalAttackSpeed(saberClass) - 1.25f) < 0.001f,
                 "Saber inherits melee damage and attack speed bonuses");
-            statsPlayer.GetDamage(saberClass) += 0.25f;
-            Check(MathF.Abs(statsPlayer.GetTotalDamage(saberClass).ApplyTo(24f) - 42f) < 0.001f &&
-                MathF.Abs(statsPlayer.GetTotalDamage(DamageClass.Melee).ApplyTo(24f) - 36f) < 0.001f,
-                "Saber-specific accessory stats do not buff ordinary melee damage");
+            Check(!SaberCombatPlayer.IsSaber(new Item(ItemID.CopperShortsword)),
+                "Ordinary melee weapons never acquire Saber charge mechanics");
             statsPlayer.GetDamage(DamageClass.Melee) = StatModifier.Default;
             statsPlayer.GetDamage(saberClass) = StatModifier.Default;
             statsPlayer.GetAttackSpeed(DamageClass.Melee) = 1f;
@@ -562,15 +560,15 @@ public class DevelopmentChecks : ModSystem
                 !WarpToCursorPlayer.InWorld(new Vector2(-1, 32), 20, 42, 100, 100) &&
                 !WarpToCursorPlayer.InWorld(new Vector2(1590, 32), 20, 42, 100, 100),
                 "Warp rejects invalid coordinates and the world border");
-            var familySword = new Item(ItemID.CopperShortsword) { DamageType = saberClass, useTime = 12 };
-            Check(SaberCombatPlayer.IsSaber(familySword) && !SaberCombatPlayer.IsSaber(new Item(ItemID.Musket)),
-                "Shared Saber rules use the damage subclass, not the Saber item ID");
-            Check(new SaberWeaponRules().AltFunctionUse(familySword, Main.player[0]), "Every Saber subclass item receives the right-click controller");
+            var testSaber = saber;
+            Check(SaberCombatPlayer.IsSaber(testSaber) && !SaberCombatPlayer.IsSaber(new Item(ItemID.Musket)),
+                "Only Saber receives its charge and dash controller");
+            Check(new SaberWeaponRules().AltFunctionUse(testSaber, Main.player[0]), "Saber retains right-click controls");
             Main.player[0].ownedProjectileCounts[ModContent.ProjectileType<SaberChargeProjectile>()] = 1;
-            Check(new SaberWeaponRules().CanHitNPC(familySword, Main.player[0], Main.npc[0]) == false,
-                "Subclass charge suppresses accidental vanilla melee contact from its held item");
+            Check(new SaberWeaponRules().CanHitNPC(testSaber, Main.player[0], Main.npc[0]) == false,
+                "Saber charge suppresses accidental vanilla melee contact from its held item");
             Main.player[0].ownedProjectileCounts[ModContent.ProjectileType<SaberChargeProjectile>()] = 0;
-            Main.player[0].inventory[0] = familySword;
+            Main.player[0].inventory[0] = testSaber;
             Main.player[0].velocity = new Vector2(4, -1);
             Main.player[0].sloping = true; Main.player[0].jump = 0;
             Check(SaberCombatPlayer.IsGrounded(Main.player[0]), "Vanilla slope ascent is valid ground despite upward velocity");
@@ -619,6 +617,158 @@ public class DevelopmentChecks : ModSystem
                 Array.Copy(savedLaunchProjectiles, Main.projectile, savedLaunchProjectiles.Length);
                 Main.player[0].sloping = false; Main.player[0].controlUseTile = false;
                 combat.ResetForTeleport();
+            }
+            var iron = new Item(); iron.SetDefaults(ModContent.ItemType<IronLance>());
+            var lancerClass = DamageClass.Melee;
+            Check(iron.damage == 10 && iron.knockBack == 1.5f && iron.DamageType == lancerClass &&
+                iron.CountsAsClass(DamageClass.Melee) && !SaberCombatPlayer.IsSaber(iron), "Iron Lance uses vanilla melee without Saber controls");
+            Check(iron.ModItem.Tooltip.Value.Contains("Quick Thrust") && iron.ModItem.Tooltip.Value.Contains("10 ticks"), "Iron Lance English tooltip resolves");
+            Check(Main.recipe.Take(Recipe.numRecipes).Any(r => r.createItem.type == iron.type &&
+                HasIngredient(r, ItemID.Wood, 5) && r.requiredItem.Any(i => i.stack == 10 && i.type == ItemID.IronBar) &&
+                r.requiredTile.Contains(TileID.Anvils)), "Iron Lance recipe uses 10 Iron/Lead bars and 5 Wood at an Anvil");
+            Main.player[0].GetDamage(DamageClass.Melee) += 0.25f;
+            Main.player[0].GetAttackSpeed(DamageClass.Melee) = 1.2f;
+            Check(MathF.Abs(Main.player[0].GetTotalDamage(lancerClass).ApplyTo(100) - 125) < 0.001f &&
+                MathF.Abs(Main.player[0].GetTotalAttackSpeed(lancerClass) - 1.2f) < 0.001f, "Lancer inherits melee damage and attack speed stats");
+            Main.player[0].GetDamage(DamageClass.Melee) = StatModifier.Default;
+            Main.player[0].GetAttackSpeed(DamageClass.Melee) = 1;
+            Check(iron.DamageType == saber.DamageType && iron.DamageType == DamageClass.Melee,
+                "Iron Lance and Saber share the actual vanilla melee class");
+            Main.player[0].inventory[0] = iron;
+            Main.player[0].controlUseItem = true; Main.player[0].controlUseTile = false;
+            Main.player[0].velocity = new Vector2(22, 0);
+            var heldLance = Shot(ModContent.ProjectileType<HeldLanceProjectile>(), Vector2.Zero);
+            heldLance.ModProjectile.OnSpawn(Main.player[0].GetSource_ItemUse(iron));
+            Check(heldLance.usesLocalNPCImmunity && heldLance.localNPCHitCooldown == 10 && heldLance.penetrate == -1 &&
+                !heldLance.ModProjectile.ShouldUpdatePosition() && heldLance.ownerHitCheck, "Lance uses independent local immunity and an attached line-of-sight hitbox");
+            for (int tick = 0; tick < 14; tick++) heldLance.ModProjectile.AI();
+            Check(heldLance.ModProjectile.CanDamage() == false, "Actual held projectile is harmless during 15-tick preparation");
+            heldLance.ModProjectile.AI();
+            Check(heldLance.ai[0] == 1 && heldLance.friendly, "Actual held lance becomes ready at tick 15");
+            Check(Main.player[0].velocity == new Vector2(22, 0), "Preparing/tracking does not write movement velocity");
+            var lanceFields = typeof(HeldLanceProjectile);
+            var privateFields = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
+            Vector2 renderedTail = (Vector2)lanceFields.GetField("tail", privateFields).GetValue(heldLance.ModProjectile);
+            Vector2 renderedTip = (Vector2)lanceFields.GetField("tip", privateFields).GetValue(heldLance.ModProjectile);
+            Vector2 renderedGrip = (Vector2)lanceFields.GetField("grip", privateFields).GetValue(heldLance.ModProjectile);
+            Check(MathF.Abs(Vector2.Distance(renderedTail, renderedTip) - 240) < 0.001f &&
+                Vector2.Distance((renderedTail + renderedTip) / 2, renderedGrip) < 0.001f,
+                "Lance renders at 240 pixels with its grip exactly at the midpoint");
+            Vector2 renderedAxis = (renderedTip - renderedTail).SafeNormalize(Vector2.UnitX);
+            Vector2 tipTarget = renderedTip - renderedAxis * 20;
+            Vector2 shaftTarget = renderedTail + renderedAxis * 20;
+            Check(heldLance.ModProjectile.Colliding(default, new Rectangle((int)tipTarget.X - 2, (int)tipTarget.Y - 2, 4, 4)) == true &&
+                heldLance.ModProjectile.Colliding(default, new Rectangle((int)shaftTarget.X - 2, (int)shaftTarget.Y - 2, 4, 4)) == false,
+                "Actual projectile collision agrees with the rendered tip and excludes the shaft");
+            var lancerPlayer = Main.player[0].GetModPlayer<global::TornMod.Common.Lancer.LancerPlayer>();
+            Check(!lancerPlayer.ImmuneTo(Terraria.DataStructures.PlayerDeathReason.ByNPC(0), 0, false),
+                "No speculative protection before a successful tip impact");
+            var hitModifiers = new NPC.HitModifiers { SourceDamage = StatModifier.Default };
+            Main.player[0].velocity = new Vector2(global::TornMod.Common.Lancer.LancerTuning.ProtectionSpeed, 0);
+            Main.npc[1].velocity = Vector2.Zero; heldLance.ai[2] = 0;
+            heldLance.ModProjectile.ModifyHitNPC(Main.npc[1], ref hitModifiers);
+            heldLance.ModProjectile.OnHitNPC(Main.npc[1], default, 80);
+            Check(!lancerPlayer.ImmuneTo(Terraria.DataStructures.PlayerDeathReason.ByNPC(1), 0, false) &&
+                Main.player[0].velocity.X == global::TornMod.Common.Lancer.LancerTuning.ProtectionSpeed,
+                "Exactly 45 mph cannot activate protection or boost; threshold is strictly above");
+            Main.player[0].velocity = new Vector2(22, 0);
+            hitModifiers = new NPC.HitModifiers { SourceDamage = StatModifier.Default };
+            Main.npc[0].velocity = Vector2.Zero; heldLance.ai[2] = 0;
+            heldLance.ModProjectile.ModifyHitNPC(Main.npc[0], ref hitModifiers);
+            Check(hitModifiers.SourceDamage.ApplyTo(10) == 200 && !hitModifiers.ToHitInfo(10, false, 0).Crit,
+                "Momentum grants capped twentyfold source damage without forced crit");
+            var lanceGlider = Main.player[0].GetModPlayer<global::TornMod.Common.Glider.GliderPlayer>();
+            lanceGlider.ApplyNetworkState(true, false, new System.Numerics.Vector2(22, 0));
+            heldLance.ModProjectile.OnHitNPC(Main.npc[0], default, 25);
+            Check(Main.player[0].velocity == new Vector2(22 + global::TornMod.Common.Lancer.LancerTuning.ImpactForwardBoost, 0), "Successful impact adds a fixed 50 mph forward impulse");
+            var cachedFlight = (global::TornMod.Common.Glider.GliderController)typeof(global::TornMod.Common.Glider.GliderPlayer)
+                .GetField("controller", privateFields).GetValue(lanceGlider);
+            Check(cachedFlight.Velocity == new System.Numerics.Vector2(22 + global::TornMod.Common.Lancer.LancerTuning.ImpactForwardBoost, 0), "Glider cache retains the impact impulse for its next movement step");
+            lanceGlider.ApplyNetworkState(false, false, System.Numerics.Vector2.Zero);
+            var protectionDeadlines = (ulong[])typeof(global::TornMod.Common.Lancer.LancerPlayer)
+                .GetField("protectionUntil", privateFields).GetValue(lancerPlayer);
+            ulong earnedDeadline = protectionDeadlines[0];
+            Check(earnedDeadline == Main.GameUpdateCount + 60, "Successful impact earns exactly sixty ticks of protection");
+            Check(lancerPlayer.ImmuneTo(Terraria.DataStructures.PlayerDeathReason.ByNPC(0), 0, false) &&
+                !lancerPlayer.ImmuneTo(Terraria.DataStructures.PlayerDeathReason.ByNPC(1), 0, false) &&
+                !lancerPlayer.ImmuneTo(Terraria.DataStructures.PlayerDeathReason.ByOther(1), 0, false),
+                "Earned protection is restricted to the struck NPC");
+            Check(heldLance.ModProjectile.CanHitNPC(Main.npc[0]) == false && heldLance.ModProjectile.CanHitNPC(new NPC { whoAmI = 2 }) != false,
+                "Contact cooldown is independent per NPC");
+            hitModifiers = new NPC.HitModifiers { SourceDamage = StatModifier.Default };
+            heldLance.ModProjectile.ModifyHitNPC(Main.npc[0], ref hitModifiers);
+            heldLance.ModProjectile.OnHitNPC(Main.npc[0], default, 10);
+            Check(hitModifiers.SourceDamage.ApplyTo(10) == 10 && Main.player[0].velocity == new Vector2(22 + global::TornMod.Common.Lancer.LancerTuning.ImpactForwardBoost, 0),
+                "Continuous contact does not repeat momentum damage or forward impulse");
+            Check(protectionDeadlines[0] == earnedDeadline, "Ordinary contact cannot renew earned protection");
+            protectionDeadlines[0] = Main.GameUpdateCount;
+            Check(!lancerPlayer.ImmuneTo(Terraria.DataStructures.PlayerDeathReason.ByNPC(0), 0, false),
+                "Protection expires at its deadline even when the NPC remains in contact");
+            protectionDeadlines[0] = earnedDeadline;
+            Vector2 savedImpactPosition = Main.npc[0].position;
+            try
+            {
+                Main.npc[0].position = new Vector2(10000, 10000);
+                for (int tick = 0; tick < global::TornMod.Common.Lancer.LancerTuning.ImpactSeparationTicks; tick++)
+                    heldLance.ModProjectile.AI();
+                Main.npc[0].position = savedImpactPosition; heldLance.ai[2] = 0;
+                hitModifiers = new NPC.HitModifiers { SourceDamage = StatModifier.Default };
+                heldLance.ModProjectile.ModifyHitNPC(Main.npc[0], ref hitModifiers);
+                Check(hitModifiers.SourceDamage.ApplyTo(10) == 200, "A separated pass rearms the same NPC");
+            }
+            finally { Main.npc[0].position = savedImpactPosition; }
+            ((HeldLanceProjectile)heldLance.ModProjectile).BeginQuick(0, 30, 8);
+            hitModifiers = new NPC.HitModifiers { SourceDamage = StatModifier.Default };
+            heldLance.ModProjectile.ModifyHitNPC(Main.npc[1], ref hitModifiers);
+            Check(hitModifiers.SourceDamage.ApplyTo(10) == 10, "Quick Thrust does not use momentum");
+            Vector2 savedThrustCenter = Main.npc[1].Center;
+            Main.npc[1].Center = Main.player[0].Center - Vector2.UnitX * 30;
+            heldLance.ModProjectile.ModifyHitNPC(Main.npc[1], ref hitModifiers);
+            Check(hitModifiers.ToHitInfo(10, false, 8).HitDirection == -1, "Quick pushes left targets away");
+            Main.npc[1].Center = Main.player[0].Center + Vector2.UnitX * 30;
+            heldLance.ModProjectile.ModifyHitNPC(Main.npc[1], ref hitModifiers);
+            Check(hitModifiers.ToHitInfo(10, false, 8).HitDirection == 1, "Quick pushes right targets away");
+            heldLance.ModProjectile.OnHitNPC(Main.npc[1], default, 30);
+            for (int tick = 0; tick < 10; tick++) heldLance.ModProjectile.AI();
+            Check(heldLance.ModProjectile.CanHitNPC(Main.npc[1]) == false,
+                "Quick cannot hit an NPC twice even after contact cooldown expires");
+            Main.npc[1].Center = savedThrustCenter;
+            Projectile[] savedLanceProjectiles = (Projectile[])Main.projectile.Clone();
+            try
+            {
+                for (int i = 0; i < Main.maxProjectiles; i++) Main.projectile[i] = new Projectile { whoAmI = i };
+                var lanceWeapon = (global::TornMod.Common.Lancer.LancerWeapon)iron.ModItem;
+                Check(lancerPlayer.Begin(lanceWeapon, false, 0), "Shared Lancer player starts preparation");
+                Projectile normalLance = Main.projectile.Single(p => p.active && p.ModProjectile is HeldLanceProjectile);
+                for (int tick = 0; tick < 15; tick++) normalLance.ModProjectile.AI();
+                ModProjectile normalController = normalLance.ModProjectile;
+                normalLance.ModProjectile.OnHitNPC(Main.npc[0], default, 10);
+                Check(lancerPlayer.Begin(lanceWeapon, true, 0) && normalLance.active && normalLance.ModProjectile == normalController,
+                    "Quick suspends readiness in the same projectile, preserving cooldown tables");
+                Projectile quickLance = normalLance;
+                Check(quickLance.damage == 30 && quickLance.knockBack == 8 && quickLance.localNPCHitCooldown == 10 && lancerPlayer.QuickCooldown == 30,
+                    "Quick keeps stats and shared contact immunity with a thirty-tick use cooldown");
+                Check(quickLance.ModProjectile.CanHitNPC(Main.npc[0]) == false, "Quick cannot bypass a preceding left contact cooldown");
+                Check(!lancerPlayer.Begin(lanceWeapon, true, 0), "Quick spam cannot bypass its use cooldown");
+                using var stream = new System.IO.MemoryStream();
+                using (var writer = new System.IO.BinaryWriter(stream, System.Text.Encoding.UTF8, true)) quickLance.ModProjectile.SendExtraAI(writer);
+                stream.Position = 0;
+                var receiver = Shot(quickLance.type, Vector2.Zero); receiver.ai[0] = 3;
+                using (var reader = new System.IO.BinaryReader(stream, System.Text.Encoding.UTF8, true)) receiver.ModProjectile.ReceiveExtraAI(reader);
+                Check(receiver.localNPCHitCooldown == 10, "Shared immunity and suspended state deserialize");
+                for (int tick = 0; tick < 12; tick++) quickLance.ModProjectile.AI();
+                Check(quickLance.active && quickLance.ai[0] == 1 && quickLance.damage == 10 && quickLance.knockBack == 1.5f,
+                    "Held left resumes readiness immediately with contact damage and knockback restored");
+                for (int tick = 0; tick < 12; tick++) receiver.ModProjectile.AI();
+                Check(receiver.ai[0] == 1, "Deserialized Quick resumes the saved ready phase");
+                lancerPlayer.CancelLance();
+                Check(!quickLance.active, "Item switch/warp cancellation still removes the lance");
+            }
+            finally
+            {
+                lancerPlayer.UpdateDead();
+                Array.Copy(savedLanceProjectiles, Main.projectile, savedLanceProjectiles.Length);
+                Main.player[0].controlUseItem = false; Main.player[0].velocity = Vector2.Zero;
             }
             Projectile splitter = Shot(ModContent.ProjectileType<SlipperonSplitProjectile>(), new Vector2(20f, 0f));
             splitter.ModProjectile.OnSpawn(new Terraria.DataStructures.EntitySource_Misc("SlipperChecks"));

@@ -1,8 +1,3 @@
-DamageClasses: {
-	BoltActionDamageClass.DisplayName: bolt action damage
-	SaberDamageClass.DisplayName: saber damage
-}
-
 Projectiles: {
 	PiercerBulletProjectile.DisplayName: Piercer
 	SaberChargeProjectile.DisplayName: Saber
@@ -14,6 +9,7 @@ Projectiles: {
 	SaberSlashProjectile.DisplayName: Saber
 	SaberDashTrailProjectile.DisplayName: Saber
 	SlipperonSplitProjectile.DisplayName: Slipperon
+	HeldLanceProjectile.DisplayName: Iron Lance
 }
 
 RecipeGroups.GoldOrPlatinumBar: Gold or Platinum Bar
@@ -40,6 +36,23 @@ Configs: {
 }
 
 Items: {
+	IronLance: {
+		DisplayName: Iron Lance
+		Tooltip:
+			'''
+			Melee weapon: benefits from melee bonuses
+			Hold left click: prepare for 0.25 seconds and smoothly track the mouse
+			240-pixel lance, held at its center; only the final 40 pixels deal contact damage
+			Ready contact: 10 base damage every 10 ticks per enemy
+			First impact: 5x damage at 30 mph, scaling to 20x at 100 mph
+			Re-crossing an enemy after 20 ticks out of contact enables another impact
+			Above 45 mph forward speed: gain 50 mph and 60 ticks of protection against the struck enemy
+			Right click: 30 base damage Quick Thrust pushing enemies away from you; 30-tick use interval
+			Quick Thrust suspends the stance; held left resumes readiness immediately
+			Pre-Eye of Cthulhu
+			'''
+	}
+
 	GliderWings: {
 		DisplayName: Glider Wings
 		Tooltip:
@@ -70,7 +83,7 @@ Items: {
 		DisplayName: Piercer
 		Tooltip:
 			'''
-			Bolt Action Rifle subclass: inherits ranged bonuses
+			Ranged weapon: benefits from ranged bonuses
 			Fires very fast, long bullets that pierce up to 3 enemies
 			Right click after firing to cycle the bolt before shooting again
 			Bolt cycle: 2 seconds with a long open phase
@@ -96,7 +109,7 @@ Items: {
 		DisplayName: Saber
 		Tooltip:
 			'''
-			Saber subclass: inherits melee damage and attack speed
+			Melee weapon: benefits from melee damage and attack speed
 			Hold left click to repeatedly slash toward the cursor
 			Hold right click to charge and repeatedly dash after cooldown
 			Grounded use with 8 ticks of coyote time; release early for a shorter dash

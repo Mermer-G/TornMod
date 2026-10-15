@@ -7,5 +7,6 @@
     <Compile Include="../../TornMod/Common/HomingMath.cs" Link="HomingMath.cs" />
     <Compile Include="../../TornMod/Common/Saber/SaberMechanics.cs" Link="SaberMechanics.cs" />
     <Compile Include="../../TornMod/Common/Glider/GliderController.cs" Link="GliderController.cs" />
+    <Compile Include="../../TornMod/Common/Lancer/LancerMechanics.cs" Link="LancerMechanics.cs" />
   </ItemGroup>
 </Project>

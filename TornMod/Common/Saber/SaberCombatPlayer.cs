@@ -23,7 +23,7 @@ public class SaberCombatPlayer : ModPlayer
             player.width, player.height, player.controlDown, false, (int)player.gravDir);
         return probe.Y * player.gravDir < 5.999f;
     }
-    public static bool IsSaber(Item item) => !item.IsAir && item.CountsAsClass(ModContent.GetInstance<SaberDamageClass>());
+    public static bool IsSaber(Item item) => !item.IsAir && item.type == ModContent.ItemType<global::TornMod.Content.Items.Saber>();
     public int CoyoteTicks { get; private set; }
     public int DashCooldown { get; private set; }
     public bool CanChargeDash() => CoyoteTicks > 0 || IsGrounded(Player);
@@ -175,7 +175,7 @@ public class SaberCombatPlayer : ModPlayer
                     if (TryRecordDashHit(npc))
                     {
                         Player.ApplyDamageToNPC(npc, dashDamage, dashKnockback,
-                            dashDirection.X >= 0f ? 1 : -1, true, ModContent.GetInstance<SaberDamageClass>());
+                            dashDirection.X >= 0f ? 1 : -1, true, DamageClass.Melee);
                         RegisterChargedHit();
                     }
                 }

@@ -6,7 +6,7 @@ Updated: 2026-10-14. Pre-Hardmode momentum accessory; acquire with `/give Glider
 
 Hold Jump (Space by default) in the air. Press W once to switch Normal Glide / Acrobatics. This is a rebindable key, only eligible when equipped, Jump held, airborne and outside conflicting movement states. Normal Up/rope input remains available elsewhere.
 
-Normal Glide uses A/D steering and Down-to-dive. High horizontal speed gives lower sink; low airspeed stalls. Release Down to convert dive momentum into horizontal travel. Mouse still aims weapons. Maximum flight speed remains 22 pixels/tick; the original normal-mode tuning was preserved.
+Normal Glide uses A/D steering and Down-to-dive. High horizontal speed gives lower sink; low airspeed stalls. Release Down to convert dive momentum into horizontal travel. Mouse still aims weapons. Ordinary flight is capped at 22 pixels/tick; normal-mode tuning was preserved. Earned external momentum from Lancer can temporarily exceed this cap and decays with drag until ordinary limits resume.
 
 Acrobatics smoothly turns momentum toward the mouse through full 360° loops. Mouse-down dives, mouse-forward pulls out and mouse-up spends kinetic energy to climb. Unpowered steering does not create free altitude. During the rocket-boots stage, mouse-directed thrust uses vanilla rocket bursts/fuel; no boots means no extra thrust. Switching modes keeps velocity; an upward climb switched to Normal coasts until descent resumes. Release Jump restores vanilla movement.
 
@@ -29,3 +29,5 @@ Wings open/fold and tuck during dives. Normal lean approaches 26°; dive lean 66
 The owning client predicts motion. Mode, aim, active/dive/boost flags and bounded signed velocity snapshots accompany Terraria PlayerControls. Facing changes sync immediately; active snapshots otherwise run every six ticks and at transitions. Server checks sender identity and malformed state; joining clients receive current state. Real latency/packet-loss/two-client behavior is unverified.
 
 Source: [Glider folder](../TornMod/Common/Glider/GliderController.cs). Full test status is maintained only in [Testing](TESTING.md).
+
+Lancer integration: held-lance AI never repositions the player. Successful high-speed tip hits add a fixed forward impulse captured into the cached Glider velocity; ordinary traversal tuning is unchanged. The grip compensates for rendered lean while aim smoothly tracks the mouse. Swept collision uses only the final 40 pixels of the rendered shaft. Above 45 mph of player forward speed, a successful first impact adds 50 mph and earns sixty ticks of contact protection only against the struck NPC. External momentum is explicitly synchronized in the existing Glider packet and is cleared on release/block/death; all peers require the updated mod. Actual full-roll hand/lance alignment remains a live visual check.

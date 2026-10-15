@@ -18,7 +18,7 @@ public class Saber : ModItem
         Item.damage = 24;
         Item.crit = 4;
         Item.knockBack = 4f;
-        Item.DamageType = ModContent.GetInstance<SaberDamageClass>();
+        Item.DamageType = DamageClass.Melee;
         Item.autoReuse = true;
         Item.useTime = Item.useAnimation = 12;
         Item.useStyle = ItemUseStyleID.Shoot;

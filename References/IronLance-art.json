@@ -1,0 +1,19 @@
+{
+  "output_sha256": "0FC759F67A52F42E5A0F16A5886EE8DEA345FB484812A27949399D2D2E0FAF95",
+  "prompt": "Use case: precise-object-edit. Edit target: the attached pixel-art iron lance. Produce exactly the same single lance laid PERFECTLY HORIZONTAL, metal spearhead pointing RIGHT and metal pommel LEFT. Preserve the long thin brown wooden shaft, its pixel wood grain, the silver binding rings, the brown leather grip near the spearhead, the metal guard and original faceted silver spearhead and pommel. Treat this as a rotation/layout correction, not a redesign. Same proportions and pixel-art palette and detail, no decorations, no glow, no shadows, no text, no extra weapons. Entire lance fits with small padding, centered vertically. TRUE TRANSPARENT alpha background. Output a wide landscape canvas, object axis aligned to the horizontal X axis, shaft perfectly straight. This is a Terraria mod sprite asset; use crisp pixel edges.",
+  "alpha_corner": 0,
+  "visible_crop": {
+    "x": 25,
+    "height": 121,
+    "width": 2122,
+    "y": 302
+  },
+  "width": 2172,
+  "tool": "built-in imagegen",
+  "original_sha256": "6203F66873460615CD3B3C5B919BAC9FCF4780C5A369BB10837BD7DF928B7146",
+  "height": 724,
+  "date": "2026-10-14",
+  "operation": "generated horizontal edit",
+  "original": "References/IronLance-original.png",
+  "output": "TornMod/Content/Items/IronLance.png"
+}

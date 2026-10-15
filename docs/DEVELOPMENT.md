@@ -17,17 +17,27 @@ powershell -ExecutionPolicy Bypass -File .\test.ps1
 
 For normal reload: save and leave the world, then Workshop → Develop Mods → Build + Reload. Supported method-body changes may use Visual Studio Hot Reload under the debugger. New structure/assets require reload or restart; source/PDB mismatches prevent Hot Reload. Never terminate the user's game to release a package lock. Logs are in the installed `tModLoader-Logs` folder.
 
+## GitHub and GitHub Desktop
+
+The source repository is [Mermer-G/TornMod](https://github.com/Mermer-G/TornMod), private, with local `main` tracking `origin/main`. The first commit was pushed through Git rather than GitHub Desktop. Development saves, local settings, caches and compiled packages are excluded by `.gitignore`.
+
+To display this existing checkout in GitHub Desktop, select **File → Add local repository → Choose**, select the project root containing `TornMod.sln` and `.git`, then **Add repository**. See the [official instructions](https://docs.github.com/en/desktop/adding-and-cloning-repositories/adding-a-repository-from-your-local-computer-to-github-desktop). Desktop registration is separate from GitHub publication. Private remote access uses the Mermer-G account.
+
+The initial publication does not establish automatic commit/push for later tasks. Subsequent local changes need a commit/push when requested; the documentation-review rule in root AGENTS.md does not itself publish them.
+
 ## Singleplayer chat commands
 
 | Command | Behavior |
 | --- | --- |
 | `/give <name, ID or Mod/Item> [amount]` | Dynamic item lookup; supports spaces and unique partial matches. Ambiguity lists choices. |
-| `/give list [search]` | Lists this mod's items, or searches all items. New items need no command edits. |
+| `/give list [search]` | Lists this mod's items, or searches all items. New items need no command edits; `/give Iron Lance` resolves the new weapon. |
 | `/sliptest` | Five weapons, 1000 slippers, 500 bullets and 500 arrows. Use `/give Glider Wings` separately. |
 | `/spawnrate <0–100 or reset>` | Natural spawn multiplier; resets on world exit. Does not remove existing enemies. |
 | `/boss list` / `/boss eye` | Boss aliases, vanilla boss names or IDs; normal boss behavior still applies. |
 | `/dummy` | Five placeable Target Dummies and one DPS Meter. |
 | `/zombies` | Up to five zombies on each side; reports placement/slot failures. |
+| `/day` | Sets world time to the start of daytime, 4:30 AM. |
+| `/night` | Sets world time to the start of nighttime, 7:30 PM. |
 
 Give amounts are 1–9999, bounded to 100 resulting stacks. Overflow items drop beside the player. These commands are singleplayer-only.
 
